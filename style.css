@@ -1,42 +1,44 @@
 
 body {
-  background: #111;
+  background: #0d0d0d;
   color: #eee;
-  font-family: sans-serif;
+  font-family: monospace;
   text-align: center;
-  margin: 0;
   padding: 20px;
 }
 h1 {
-  color: #0ff;
+  color: #00f0ff;
 }
 #stats {
-  margin-top: 10px;
-  font-size: 16px;
+  margin-bottom: 10px;
+  font-size: 15px;
 }
 #grid {
   display: grid;
   grid-template-columns: repeat(5, 50px);
-  grid-gap: 10px;
+  grid-gap: 8px;
   justify-content: center;
-  margin-top: 20px;
+  margin: 20px auto;
 }
 .cell {
   width: 50px;
   height: 50px;
   background: #222;
-  border: 1px solid #555;
-  cursor: pointer;
+  border: 1px solid #444;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.cell.safe { background: #2ecc71; }
-.cell.risk { background: #e74c3c; }
-.controls button {
-  margin: 10px;
-  padding: 10px 15px;
-  background: #0ff;
-  border: none;
   cursor: pointer;
+}
+.cell.safe { background-color: #27ae60; }
+.cell.mine { background-color: #c0392b; }
+.cell.suggest { outline: 2px solid yellow; }
+.controls button {
+  margin: 6px;
+  padding: 10px 12px;
+  background: #00f0ff;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  border-radius: 4px;
 }

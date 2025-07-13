@@ -1,87 +1,74 @@
 
 const gridSize = 25;
 let mines = new Set();
-let gameOver = false;
-let winCount = 0;
-let loseCount = 0;
+let clickHistory = new Set();
+let wins = 0;
+let losses = 0;
+let streak = 0;
 
-function createGrid() {
+function setupGrid() {
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
   for (let i = 0; i < gridSize; i++) {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.dataset.index = i;
-    cell.onclick = () => revealCell(cell);
+    cell.onclick = () => markCell(i);
     grid.appendChild(cell);
   }
 }
 
-function placeMines() {
-  mines.clear();
-  gameOver = false;
-  document.querySelectorAll(".cell").forEach(c => c.className = "cell");
-  while (mines.size < 5) {
-    mines.add(Math.floor(Math.random() * gridSize));
+function markCell(index) {
+  const cell = document.querySelectorAll(".cell")[index];
+  if (cell.classList.contains("safe")) return;
+  cell.classList.add("safe");
+  clickHistory.add(index);
+  streak++;
+  wins++;
+  updateStats();
+}
+
+function recordClick() {
+  const manual = prompt("Enter tile index (0-24) you clicked in 1Win:");
+  const index = parseInt(manual);
+  if (isNaN(index) || index < 0 || index >= gridSize) {
+    alert("Invalid tile number.");
+    return;
   }
-  highlightHeatmap();
+  markCell(index);
 }
 
-function revealCell(cell) {
-  if (gameOver) return;
-  const index = parseInt(cell.dataset.index);
-  if (mines.has(index)) {
-    cell.className = "cell risk";
-    alert("💥 Boom! You hit a mine.");
-    loseCount++;
-    updateStats();
-    gameOver = true;
-  } else {
-    cell.className = "cell safe";
-    winCount++;
-    updateStats();
-  }
-}
-
-function highlightHeatmap() {
-  document.querySelectorAll(".cell").forEach((cell, i) => {
-    if (!mines.has(i)) {
-      cell.classList.add("safe");
-    } else {
-      cell.classList.add("risk");
-    }
-  });
-}
-
-function simulateCashout() {
-  let safeCount = 0;
+function suggestMove() {
+  let best;
   for (let i = 0; i < gridSize; i++) {
-    if (!mines.has(i)) safeCount++;
-  }
-  alert("Estimated payout: $" + (safeCount * 2).toFixed(2));
-}
-
-function resetGame() {
-  gameOver = false;
-  mines.clear();
-  createGrid();
-}
-
-function updateStats() {
-  document.getElementById("stats").textContent = `✅ Wins: ${winCount} | 💣 Losses: ${loseCount}`;
-}
-
-function suggestBestTile() {
-  for (let i = 0; i < gridSize; i++) {
-    if (!mines.has(i)) {
-      const cell = document.querySelectorAll(".cell")[i];
-      cell.style.outline = "2px solid yellow";
+    if (!clickHistory.has(i)) {
+      best = i;
       break;
     }
   }
+  if (best !== undefined) {
+    const cell = document.querySelectorAll(".cell")[best];
+    cell.classList.add("suggest");
+  }
+}
+
+function simulateCashout() {
+  alert("💰 Your estimated cashout would be: $" + (streak * 2.0).toFixed(2));
+}
+
+function resetGame() {
+  mines.clear();
+  clickHistory.clear();
+  streak = 0;
+  setupGrid();
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById("stats").innerText = `✅ Wins: ${wins} | 💣 Losses: ${losses} | 🔄 Streak: ${streak}`;
 }
 
 window.onload = () => {
-  createGrid();
+  setupGrid();
   updateStats();
 };

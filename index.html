@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>1Win Mine Predictor</title>
+  <title>1Win Pro Mine Predictor</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>1Win Mine Predictor (AI Enhanced)</h1>
-  <div id="stats">✅ Wins: 0 | 💣 Losses: 0</div>
+  <h1>1Win Pro Mine Predictor 🔒</h1>
+  <div id="stats">✅ Wins: 0 | 💣 Losses: 0 | 🔄 Streak: 0</div>
   <div id="game">
     <div id="grid"></div>
     <div class="controls">
-      <button onclick="placeMines()">Place Random Mines</button>
+      <button onclick="recordClick()">Record Click</button>
+      <button onclick="suggestMove()">Suggest Move</button>
       <button onclick="simulateCashout()">Simulate Cashout</button>
-      <button onclick="suggestBestTile()">Suggest Best Tile</button>
       <button onclick="resetGame()">Reset</button>
     </div>
   </div>
