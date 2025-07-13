@@ -1,6 +1,9 @@
 
 const gridSize = 25;
 let mines = new Set();
+let gameOver = false;
+let winCount = 0;
+let loseCount = 0;
 
 function createGrid() {
   const grid = document.getElementById("grid");
@@ -16,6 +19,8 @@ function createGrid() {
 
 function placeMines() {
   mines.clear();
+  gameOver = false;
+  document.querySelectorAll(".cell").forEach(c => c.className = "cell");
   while (mines.size < 5) {
     mines.add(Math.floor(Math.random() * gridSize));
   }
@@ -23,12 +28,18 @@ function placeMines() {
 }
 
 function revealCell(cell) {
+  if (gameOver) return;
   const index = parseInt(cell.dataset.index);
   if (mines.has(index)) {
     cell.className = "cell risk";
     alert("💥 Boom! You hit a mine.");
+    loseCount++;
+    updateStats();
+    gameOver = true;
   } else {
     cell.className = "cell safe";
+    winCount++;
+    updateStats();
   }
 }
 
@@ -50,6 +61,27 @@ function simulateCashout() {
   alert("Estimated payout: $" + (safeCount * 2).toFixed(2));
 }
 
+function resetGame() {
+  gameOver = false;
+  mines.clear();
+  createGrid();
+}
+
+function updateStats() {
+  document.getElementById("stats").textContent = `✅ Wins: ${winCount} | 💣 Losses: ${loseCount}`;
+}
+
+function suggestBestTile() {
+  for (let i = 0; i < gridSize; i++) {
+    if (!mines.has(i)) {
+      const cell = document.querySelectorAll(".cell")[i];
+      cell.style.outline = "2px solid yellow";
+      break;
+    }
+  }
+}
+
 window.onload = () => {
   createGrid();
+  updateStats();
 };

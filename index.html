@@ -8,11 +8,14 @@
 </head>
 <body>
   <h1>1Win Mine Predictor (AI Enhanced)</h1>
+  <div id="stats">✅ Wins: 0 | 💣 Losses: 0</div>
   <div id="game">
     <div id="grid"></div>
     <div class="controls">
       <button onclick="placeMines()">Place Random Mines</button>
       <button onclick="simulateCashout()">Simulate Cashout</button>
+      <button onclick="suggestBestTile()">Suggest Best Tile</button>
+      <button onclick="resetGame()">Reset</button>
     </div>
   </div>
   <script src="script.js"></script>
