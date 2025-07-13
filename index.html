@@ -1,131 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>1Win Mine Predictor</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0f0f0f;
-      color: #f0f0f0;
-      text-align: center;
-      padding: 20px;
-    }
-    .board {
-      display: grid;
-      gap: 5px;
-      margin: 20px auto;
-    }
-    .tile {
-      width: 40px;
-      height: 40px;
-      background: #222;
-      border: 1px solid #555;
-      color: white;
-      font-size: 20px;
-      line-height: 40px;
-      cursor: pointer;
-    }
-    .safe { background-color: #2ecc71; }
-    .mine { background-color: #e74c3c; }
-    .unknown { background-color: #333; }
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #2980b9;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    input {
-      background: #222;
-      border: 1px solid #555;
-      color: white;
-      padding: 5px;
-      margin: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-<h1>1Win Mine Predictor</h1>
-<div>
-  <label>Board Size: <input id="boardSize" type="number" value="5" min="2" max="10"></label>
-  <label>Mines: <input id="mineCount" type="number" value="5" min="1"></label>
-  <button onclick="initGame()">Start Game</button>
-</div>
-
-<div class="board" id="board"></div>
-<button onclick="predictSafeTile()">Predict Safe Tile</button>
-<button onclick="cashOut()">Cash Out</button>
-<div id="status"></div>
-
-<script>
-  let board = [], picked = [], size = 5, mineCount = 5, cashMultiplier = 1;
-
-  function initGame() {
-    size = parseInt(document.getElementById("boardSize").value);
-    mineCount = parseInt(document.getElementById("mineCount").value);
-    const total = size * size;
-    board = Array(total).fill("✅");
-    picked = [];
-    cashMultiplier = 1;
-
-    let mines = new Set();
-    while (mines.size < mineCount) mines.add(Math.floor(Math.random() * total));
-    mines.forEach(i => board[i] = "💣");
-
-    drawBoard();
-    updateStatus();
-  }
-
-  function drawBoard() {
-    const grid = document.getElementById("board");
-    grid.style.gridTemplateColumns = `repeat(${size}, 40px)`;
-    grid.innerHTML = "";
-
-    board.forEach((val, i) => {
-      const div = document.createElement("div");
-      div.className = "tile unknown";
-      if (picked.includes(i)) {
-        div.textContent = board[i];
-        div.className = "tile " + (board[i] === "💣" ? "mine" : "safe");
-      }
-      div.onclick = () => markTile(i);
-      grid.appendChild(div);
-    });
-  }
-
-  function markTile(i) {
-    if (picked.includes(i)) return;
-    picked.push(i);
-    if (board[i] !== "💣") {
-      cashMultiplier = (cashMultiplier * 1.3).toFixed(2);
-    } else {
-      cashMultiplier = 0;
-    }
-    drawBoard();
-    updateStatus();
-  }
-
-  function predictSafeTile() {
-    const safeTiles = board.map((v, i) => ({v, i})).filter(t => t.v !== "💣" && !picked.includes(t.i));
-    if (safeTiles.length === 0) return alert("No safe tiles left!");
-    const pick = safeTiles[Math.floor(Math.random() * safeTiles.length)];
-    markTile(pick.i);
-  }
-
-  function cashOut() {
-    alert("You cashed out at multiplier: x" + cashMultiplier);
-    initGame();
-  }
-
-  function updateStatus() {
-    document.getElementById("status").innerText = "Multiplier: x" + cashMultiplier;
-  }
-
-  window.onload = initGame;
-</script>
+  <h1>1Win Mine Predictor (AI Enhanced)</h1>
+  <div id="game">
+    <div id="grid"></div>
+    <div class="controls">
+      <button onclick="placeMines()">Place Random Mines</button>
+      <button onclick="simulateCashout()">Simulate Cashout</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
