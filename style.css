@@ -31,7 +31,6 @@ h1 {
   cursor: pointer;
 }
 .cell.safe { background-color: #27ae60; }
-.cell.mine { background-color: #c0392b; }
 .cell.suggest { outline: 2px solid yellow; }
 .controls button {
   margin: 6px;

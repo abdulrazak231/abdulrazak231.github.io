@@ -1,6 +1,5 @@
 
 const gridSize = 25;
-let mines = new Set();
 let clickHistory = new Set();
 let wins = 0;
 let losses = 0;
@@ -13,51 +12,36 @@ function setupGrid() {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.dataset.index = i;
-    cell.onclick = () => markCell(i);
+    cell.onclick = () => handleClick(i);
     grid.appendChild(cell);
   }
 }
 
-function markCell(index) {
+function handleClick(index) {
   const cell = document.querySelectorAll(".cell")[index];
-  if (cell.classList.contains("safe")) return;
-  cell.classList.add("safe");
+  if (clickHistory.has(index)) return;
+
   clickHistory.add(index);
+  cell.classList.add("safe");
   streak++;
   wins++;
   updateStats();
 }
 
-function recordClick() {
-  const manual = prompt("Enter tile index (0-24) you clicked in 1Win:");
-  const index = parseInt(manual);
-  if (isNaN(index) || index < 0 || index >= gridSize) {
-    alert("Invalid tile number.");
-    return;
-  }
-  markCell(index);
-}
-
 function suggestMove() {
-  let best;
   for (let i = 0; i < gridSize; i++) {
     if (!clickHistory.has(i)) {
-      best = i;
+      document.querySelectorAll(".cell")[i].classList.add("suggest");
       break;
     }
-  }
-  if (best !== undefined) {
-    const cell = document.querySelectorAll(".cell")[best];
-    cell.classList.add("suggest");
   }
 }
 
 function simulateCashout() {
-  alert("💰 Your estimated cashout would be: $" + (streak * 2.0).toFixed(2));
+  alert("💰 Estimated cashout: $" + (streak * 2.0).toFixed(2));
 }
 
 function resetGame() {
-  mines.clear();
   clickHistory.clear();
   streak = 0;
   setupGrid();
@@ -65,7 +49,8 @@ function resetGame() {
 }
 
 function updateStats() {
-  document.getElementById("stats").innerText = `✅ Wins: ${wins} | 💣 Losses: ${losses} | 🔄 Streak: ${streak}`;
+  document.getElementById("stats").innerText =
+    `✅ Wins: ${wins} | 💣 Losses: ${losses} | 🔄 Streak: ${streak}`;
 }
 
 window.onload = () => {
