@@ -1,9 +1,11 @@
 
 const gridSize = 25;
 let clickHistory = new Set();
-let wins = 0;
-let losses = 0;
+let mineMode = false;
+let wins = parseInt(localStorage.getItem('wins')) || 0;
+let losses = parseInt(localStorage.getItem('losses')) || 0;
 let streak = 0;
+let mineMap = JSON.parse(localStorage.getItem('heatmap') || '[]');
 
 function setupGrid() {
   const grid = document.getElementById("grid");
@@ -12,25 +14,34 @@ function setupGrid() {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.dataset.index = i;
-    cell.onclick = () => handleClick(i);
+
+    if (mineMap.includes(i)) cell.classList.add("heatmap");
+
+    cell.onclick = () => handleClick(i, cell);
     grid.appendChild(cell);
   }
 }
 
-function handleClick(index) {
-  const cell = document.querySelectorAll(".cell")[index];
+function handleClick(index, cell) {
   if (clickHistory.has(index)) return;
+
+  if (mineMode) {
+    cell.classList.toggle("mine");
+    updateHeatmap(index);
+    return;
+  }
 
   clickHistory.add(index);
   cell.classList.add("safe");
   streak++;
   wins++;
+  saveStats();
   updateStats();
 }
 
 function suggestMove() {
   for (let i = 0; i < gridSize; i++) {
-    if (!clickHistory.has(i)) {
+    if (!clickHistory.has(i) && !document.querySelectorAll(".cell")[i].classList.contains("mine")) {
       document.querySelectorAll(".cell")[i].classList.add("suggest");
       break;
     }
@@ -51,6 +62,23 @@ function resetGame() {
 function updateStats() {
   document.getElementById("stats").innerText =
     `✅ Wins: ${wins} | 💣 Losses: ${losses} | 🔄 Streak: ${streak}`;
+}
+
+function toggleMineMode() {
+  mineMode = !mineMode;
+  alert(mineMode ? "🚩 Manual Mine Mode ON" : "🚩 Manual Mine Mode OFF");
+}
+
+function updateHeatmap(index) {
+  if (!mineMap.includes(index)) {
+    mineMap.push(index);
+    localStorage.setItem("heatmap", JSON.stringify(mineMap));
+  }
+}
+
+function saveStats() {
+  localStorage.setItem("wins", wins);
+  localStorage.setItem("losses", losses);
 }
 
 window.onload = () => {
